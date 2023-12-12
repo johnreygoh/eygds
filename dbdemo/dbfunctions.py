@@ -3,7 +3,7 @@ import pymysql
 def connect():
     try:
         connection = pymysql.connect(
-            host="localhost",
+            host="10.241.42.218", #10.241.42.218
             user="eyadmin",
             password="123",
             database="eygds")
@@ -54,16 +54,61 @@ def addrecord(fn,ln,de,ye):
             print("new record added")
     except Exception as e:
         print(e)
+        connection.rollback()
     finally:
         cursor.close()
         connection.close()
 
 
+def updaterecord(id,fi,la,de,ye):
+    try:
+        connection = connect()
+        if(connection):
+            cursor = connection.cursor()
+            sql = f"""
+                update employees set
+                firstname='{fi}',lastname='{la}',department='{de}',yearhired={ye}
+                where empid={id}
+                """
+            cursor.execute(sql)
+            connection.commit()
+            print("Record Updated")
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
 
 
+def deleterecord(id):
+    try:
+        connection = connect()
+        if(connection):
+            cursor = connection.cursor()
+            sql = f"delete from employees where empid={id}"
+            cursor.execute(sql)
+            connection.commit()
+            print("record deleted")
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
 
-
-
-
-
-
+def clearemployeestable():
+    try:
+        connection=connect()
+        if(connection):
+            cursor = connection.cursor()
+            sql = "truncate table employees"
+            cursor.execute(sql)
+            connection.commit()
+            print('Employees table has been cleared')
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
